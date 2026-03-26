@@ -35,3 +35,69 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
+
+# |VMs|
+# Virtual Server
+# Full OS
+# Slow
+# medium
+
+
+# |Docker|
+
+# Container
+# Shared OS
+# Fast
+# High
+
+
+# FROM - From which image your running your code
+# WORKDIR - Working directory of your application or code
+# COPY - to copy necessary files
+# RUN - to run commands
+# EXPOSE - to exposing the port numbers
+# ENV - storing env files
+# ARG - version of the images
+# VOLUMES - create a new volumes
+# CMD - to run commands
+# ENTRYPOINT - to give the staring point(To run coomands)
+
+
+# Dockerfile Commands
+
+# FROM node:25-alpine3.22
+
+# WORKDIR /app
+
+# COPY . .
+
+# CMD [ "node" ,"hello.js" ]
+
+# DockerFile for React Application
+
+# FROM node:25-alpine3.22
+
+# WORKDIR /app
+
+# COPY package*.json ./
+# RUN npm install
+
+# COPY . .
+
+# EXPOSE 5173
+
+# CMD [ "npm","run","dev"]
+
+# Docker Commands
+
+# docker pull <image-name>
+# docker build -t <file-name> . => for building Docker Application
+# docker run -it <file-name> => for running the Files
+# docker ps => to see running Containers
+# docker ps -a => we can see all containers
+# docker stop <container-id>/<image-name> => for stopping
+# docker start <container-id>/<image-name> => for starting
+# docker images => to see all images
+# docker run -it -p 5173:5173 <file-name>
+
+
