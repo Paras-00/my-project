@@ -1,4 +1,18 @@
-name: CI
+.env.developement
+PORT = 5000
+DB = Localhost:27017
+
+.env.staging
+subdomains.
+vercels
+
+.env.production
+DB = MongoAtlas
+Api = https://lpu.in
+
+
+
+name: Paras
 
 on:
   push:
@@ -6,216 +20,48 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  # This "opts in" to Node 24 for the actions immediately as requested
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
+    environment: Backend
+
+    env:
+      API_KEY: ${{vars.API_KEY}}
+      JWT_SEC: ${{secrets.JWT_SECRET}}
+   
+
     steps:
-      - uses: actions/checkout@v6 # Updated from v4
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
-        uses: actions/setup-node@v6 # Updated from v4
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+
       - run: npm ci
       - run: npm run build
 
+      - name: Use Secret
+        run: echo "Key is $API_KEY"
+        
+
   test:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build  
+
+    environment: Backend
+
+    env:
+      API_KEY: ${{vars.API_KEY}}
+      JWT_SEC: ${{secrets.JWT_SECRET}}
+   
     steps:
-      - uses: actions/checkout@v6 # Updated from v4
+      - uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v6 # Updated from v4
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+
       - run: npm ci
       - run: npm test
-
-# |VMs|
-# Virtual Server
-# Full OS
-# Slow
-# medium
-
-
-# |Docker|
-
-# Container
-# Shared OS
-# Fast
-# High
-
-
-# FROM - From which image your running your code
-# WORKDIR - Working directory of your application or code
-# COPY - to copy necessary files
-# RUN - to run commands
-# EXPOSE - to exposing the port numbers
-# ENV - storing env files
-# ARG - version of the images
-# VOLUMES - create a new volumes
-# CMD - to run commands
-# ENTRYPOINT - to give the staring point(To run coomands)
-
-
-# Dockerfile Commands
-
-# FROM node:25-alpine3.22
-
-# WORKDIR /app
-
-# COPY . .
-
-# CMD [ "node" ,"hello.js" ]
-
-# DockerFile for React Application
-
-# FROM node:25-alpine3.22
-
-# WORKDIR /app
-
-# COPY package*.json ./
-# RUN npm install
-
-# COPY . .
-
-# EXPOSE 5173
-
-# CMD [ "npm","run","dev"]
-
-# Docker Commands
-
-# docker pull <image-name>
-# docker build -t <file-name> . => for building Docker Application
-# docker run -it <file-name> => for running the Files
-# docker ps => to see running Containers
-# docker ps -a => we can see all containers
-# docker stop <container-id>/<image-name> => for stopping
-# docker start <container-id>/<image-name> => for starting
-# docker images => to see all images
-# docker run -it -p 5173:5173 <file-name>
-
-
-The main configuration file for Nginx is nginx.conf. It's typically located in /etc/nginx/nginx.conf
-
--------------------------
-
-worker_processes auto;
-
-events {
-worker_connections 1024;
-}
-
-http {
-include mime.types;
-default_type application/octet-stream;
-
-sendfile on;
-keepalive_timeout 65;
-
-server {
-listen 80;
-server_name localhost;
-
-location / {
-root /usr/share/nginx/html;
-index index.html index.htm;
-}
-}
-}
--------------------------------
-
-
-LOCATION BLOCK
-
-location /images/ {
-root /var/www/images;
-}
-----------------------------
-
-UPSTREAM BLOCK
-
-upstream backend {
-server backend1.example.com;
-server backend2.example.com;
-}
------------------------------------
-REVERSE PROXY WITH NGINX
-
-server {
-listen 80;
-server_name example.com;
-
-location / {
-proxy_pass http://backend_server;
-proxy_set_header Host $host;
-proxy_set_header X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
-}
----------------------------------------
-
-LOAD BALANCING WITH NGINX
-
-upstream backend {
-server backend1.example.com;
-server backend2.example.com;
-}
-
-server {
-listen 80;
-server_name example.com;
-
-location / {
-proxy_pass http://backend;
-}
-}
-------------------------------------
-SECURING NGINX WITH SSL/TLS
-
-server {
-listen 443 ssl;
-server_name example.com;
-
-ssl_certificate /etc/nginx/ssl/example.com.crt;
-ssl_certificate_key /etc/nginx/ssl/example.com.key;
-
-location / {
-root /var/www/html;
-index index.html;
-}
-}
-
-server {
-listen 80;
-server_name example.com;
-return 301 https://$host$request_uri;
-}
-------------------------------------------------
-caching
-
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=1g inactive=60m;
-
------------------------------------------------
-
-log and troubleshoot
-
-log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-'$status $body_bytes_sent "$http_referer" '
-'"$http_user_agent" "$http_x_forwarded_for"';
-
-access_log /var/log/nginx/access.log main;
----------------------------------------------
-
-apt-get update
-apt-get install nginx
-
-nginx -v
-
-docker pull nginx
-docker run --name my-nginx -d -p 8080:80 nginx
